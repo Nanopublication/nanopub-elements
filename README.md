@@ -1,6 +1,6 @@
 # nanopub-elements
 
-There are two approaches for displaying nanopub query results on a web page.
+This project introduces two approaches for displaying individual nanopubs (WIP) and query results on a web page.
 
 ## Web components
 
