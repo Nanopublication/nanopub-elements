@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Nanopubs by author — HTML template</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 760px; margin: 2rem auto; padding: 0 1rem; color: #222; }
+    #nanopubs { list-style: none; padding: 0; }
+    #nanopubs li { padding: 0.6rem 0; border-bottom: 1px solid #eee; display: flex; flex-direction: column; gap: 0.2rem; }
+    #nanopubs time { font-size: 0.85em; color: #666; }
+  </style>
+</head>
+<body>
+
+  <h1>Nanopubs by author example</h1>
+
+  <!--
+    This example uses a raw SPARQL query (querySparql) rather than a query template
+  -->
+
+  <template id="nanopub-tpl">
+    <li>
+      <time></time>
+      <a></a>
+    </li>
+  </template>
+
+  <p id="loading">Loading…</p>
+  <ul id="nanopubs"></ul>
+
+  <script type="module">
+    import { NanopubClient } from '../../dist/nanopub-elements.js';
+
+    const ORCID = 'https://orcid.org/0009-0009-0118-9195';
+    const LIMIT = 10;
+
+    const client = new NanopubClient();
+    const tpl = document.querySelector('#nanopub-tpl');
+    const ul = document.querySelector('#nanopubs');
+    const loading = document.querySelector('#loading');
+
+    const rows = await client.querySparql(`
+      PREFIX np:  <http://www.nanopub.org/nschema#>
+      PREFIX dct: <http://purl.org/dc/terms/>
+      PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+      SELECT DISTINCT ?np ?label ?timestamp WHERE {
+        ?np np:hasPublicationInfo ?i .
+        ?np dct:creator <${ORCID}> .
+        ?np dct:created ?timestamp .
+        ?np rdfs:label ?label .
+      }
+      ORDER BY DESC(?timestamp)
+      LIMIT ${LIMIT}
+    `);
+
+    loading.remove();
+
+    for (const row of rows) {
+      const clone = tpl.content.cloneNode(true);
+
+      const date = row.timestamp ? new Date(row.timestamp) : null;
+      const time = clone.querySelector('time');
+      time.dateTime = row.timestamp ?? '';
+      time.textContent = date ? date.toLocaleDateString() : '';
+
+      const a = clone.querySelector('a');
+      a.href = row.np ?? '#';
+      a.textContent = row.label || row.np || 'Untitled nanopub';
+
+      ul.appendChild(clone);
+    }
+  </script>
+
+</body>
+</html>

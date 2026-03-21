@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Events — HTML template</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 760px; margin: 2rem auto; padding: 0 1rem; color: #222; }
+    #events { list-style: none; padding: 0; }
+    #events li { padding: 0.6rem 0; border-bottom: 1px solid #eee; display: flex; flex-direction: column; gap: 0.2rem; }
+    #events time { font-size: 0.85em; color: #666; }
+  </style>
+</head>
+<body>
+
+  <h1>3PFF events example</h1>
+
+  <template id="event-tpl">
+    <li>
+      <time data-bind="Date"></time>
+      <strong data-bind="Event_Name"></strong>
+      <span data-bind="Organizers"></span>
+      <a data-bind-href="More_Info">more info</a>
+    </li>
+  </template>
+
+  <p id="loading">Loading…</p>
+  <ul id="events"></ul>
+
+  <script type="module">
+    import { NanopubClient } from '../../dist/nanopub-elements.js';
+
+    const client = new NanopubClient();
+    const tpl = document.querySelector('#event-tpl');
+    const ul = document.querySelector('#events');
+    const loading = document.querySelector('#loading');
+
+    function applyBindings(clone, row) {
+      clone.querySelectorAll('[data-bind]').forEach(el => {
+        el.textContent = row[el.dataset.bind] ?? '';
+      });
+      clone.querySelectorAll('[data-bind-href]').forEach(el => {
+        el.href = row[el.dataset.bindHref] ?? '';
+      });
+    }
+
+    const rows = [];
+
+    for await (const row of client.runQueryTemplate(
+      'RAkdyQ9BzXmooOF30BsFSNOs8EsSivp5k-eL293diNKXk/get-3pff-events', {}
+    )) {
+      rows.push(row);
+    }
+
+    loading.remove();
+
+    rows.sort((a, b) => new Date(b.Date) - new Date(a.Date));
+
+    for (const row of rows) {
+      const clone = tpl.content.cloneNode(true);
+      applyBindings(clone, row);
+      ul.appendChild(clone);
+    }
+  </script>
+
+</body>
+</html>

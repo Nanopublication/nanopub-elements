@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>News — nanopub-list component</title>
+  <script type="module" src="../../dist/nanopub-elements.js"></script>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 760px; margin: 2rem auto; padding: 0 1rem; color: #222; }
+    nanopub-list section { margin-bottom: 1.5rem; }
+    nanopub-list h3 { margin: 0 0 0.5rem; font-size: 1.1em; color: #444; }
+    nanopub-list ul { list-style: none; padding: 0; }
+    nanopub-list li { padding: 0.6rem 0; border-bottom: 1px solid #eee; display: flex; flex-direction: column; gap: 0.2rem; }
+    nanopub-list time { font-size: 0.85em; color: #666; }
+  </style>
+</head>
+<body>
+
+  <h1>Knowledge Pixels news example</h1>
+
+  <nanopub-list
+    query-template="RAOGCU2nQzZ0aE2iXwJ20jJtnZsjVR0pfFg0qlSxYtBIA/get-news-content"
+    params='{"resource":"https://w3id.org/spaces/knowledgepixels"}'
+    title-field="text"
+    date-field="datePublished"
+    link-field="link"
+    title-html
+    group-by-year
+  ></nanopub-list>
+
+</body>
+</html>

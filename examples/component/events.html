@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Events — nanopub-list component with custom template</title>
+  <script type="module" src="../../dist/nanopub-elements.js"></script>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 760px; margin: 2rem auto; padding: 0 1rem; color: #222; }
+    nanopub-list ul { list-style: none; padding: 0; }
+    nanopub-list li { padding: 0.6rem 0; border-bottom: 1px solid #eee; display: flex; flex-direction: column; gap: 0.2rem; }
+    nanopub-list time { font-size: 0.85em; color: #666; }
+    nanopub-list h3 { margin: 0; font-size: 1em; }
+  </style>
+</head>
+<body>
+
+  <h1>3PFF events examples</h1>
+
+  <h2>Default rendering</h2>
+
+  <nanopub-list
+    query-template="RAkdyQ9BzXmooOF30BsFSNOs8EsSivp5k-eL293diNKXk/get-3pff-events"
+    title-field="Event_Name"
+    date-field="Date"
+    link-field="More_Info"
+  ></nanopub-list>
+
+  <h2>Custom template</h2>
+
+  <!--
+    A <template> child gives full control over each item's markup.
+    Use data-bind="FieldName" to set text content.
+    Use data-bind-href="FieldName" to set an attribute (works for any attribute name).
+  -->
+  <nanopub-list
+    query-template="RAkdyQ9BzXmooOF30BsFSNOs8EsSivp5k-eL293diNKXk/get-3pff-events"
+    date-field="Date"
+  >
+    <template>
+      <li>
+        <h3 data-bind="Event_Name"></h3>
+        <time data-bind="Date"></time>
+        <span data-bind="Organizers"></span>
+        <a data-bind-href="More_Info">more info</a>
+      </li>
+    </template>
+  </nanopub-list>
+
+</body>
+</html>
