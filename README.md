@@ -6,9 +6,9 @@ This project introduces two approaches for displaying individual nanopubs (WIP) 
 
 This repository contains a (WIP) set of custom HTML elements that fetch and render nanopub data declaratively. No JavaScript required in the page, just add the script and use the tags.
 
-Currently available:
+### `<nanopub-list>`
 
-* `<nanopub-list>`: fetches a query template and renders results as a list.
+Fetches a query template and renders results as a list.
 
 ```html
 <script type="module" src="https://esm.sh/@nanopub/nanopub-elements"></script>
@@ -42,9 +42,50 @@ nanopub-list ul { list-style: none; }
 nanopub-list time { color: gray; }
 ```
 
+**Attributes:** `query-template`, `params` (JSON), `endpoint`, `title-field`, `date-field`, `link-field`, `sort` (`asc`/`desc`, default `desc`), `limit`, `group-by-year`.
+
+### `<nanopub-table>`
+
+Fetches a query template and renders results as an HTML table. Columns are configured via a JSON `columns` attribute.
+
+```html
+<script type="module" src="https://esm.sh/@nanopub/nanopub-elements"></script>
+
+<nanopub-table
+  query-template="RAkdyQ9BzXmooOF30BsFSNOs8EsSivp5k-eL293diNKXk/get-3pff-events"
+  date-field="Date"
+  columns='[
+    {"field":"Event_Name","label":"Event"},
+    {"field":"Date","label":"Date","type":"date"},
+    {"field":"Organizers","label":"Organizers"},
+    {"field":"Facilitators","label":"Facilitators"},
+    {"field":"More_Info","label":"More Info","type":"link"}
+  ]'
+></nanopub-table>
+```
+
+If `columns` is omitted, all fields from the query result are shown with their raw field names as headers.
+
+Each column entry has:
+
+- `field` — the query result field name
+- `label` — the column header text
+- `type` — `"text"` (default), `"date"` (renders a `<time>` element), or `"link"` (renders an `<a>` element)
+
+Style the table using the tag name as a scope:
+
+```css
+nanopub-table table { border-collapse: collapse; width: 100%; }
+nanopub-table th, nanopub-table td { padding: 0.5rem 0.75rem; border-bottom: 1px solid #eee; }
+nanopub-table th { background: #f5f5f5; }
+nanopub-table time { color: gray; }
+```
+
+**Attributes:** `query-template`, `params` (JSON), `endpoint`, `columns` (JSON), `date-field`, `sort` (`asc`/`desc`, default `desc`), `limit`.
+
 ## HTML template patterns
 
-If you prefer to write JavaScript directly rather than use a web component, see [templates.md](templates.md). It shows how to use the native HTML `<template>` element together with [nanopub-js](https://github.com/nanopublication/nanopub-js) to fetch and render query results with full control over the markup and logic.
+If you prefer to write JavaScript directly rather than use a web component, see [templates.md](templates.md). It shows how to use the native HTML `<template>` element together with [nanopub-js](https://github.com/nanopublication/nanopub-js) to fetch and render query results with full control over the markup and logic — as either a list or a table.
 
 ## Development
 
@@ -57,9 +98,9 @@ yarn serve        # serve the project at http://localhost:3000
 
 Examples are in `examples/`. Run `yarn serve` and open them at:
 
-* `http://localhost:3000/examples/component/events.html`
-* `http://localhost:3000/examples/component/news.html`
-* `http://localhost:3000/examples/component/nanosessions.html`
-* `http://localhost:3000/examples/template/events.html`
-* `http://localhost:3000/examples/template/news.html`
-* `http://localhost:3000/examples/template/author.html`
+- `http://localhost:3000/examples/component/events.html` — `<nanopub-table>` component
+- `http://localhost:3000/examples/component/news.html` — `<nanopub-list>` component
+- `http://localhost:3000/examples/component/nanosessions.html`
+- `http://localhost:3000/examples/template/events.html` — HTML template (table)
+- `http://localhost:3000/examples/template/news.html` — HTML template (list)
+- `http://localhost:3000/examples/template/author.html`
