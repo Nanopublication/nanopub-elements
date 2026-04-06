@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Events — nanopub-list component with custom template</title>
+  <title>Events — nanopub-table component</title>
   <script type="module" src="../../dist/nanopub-elements.js"></script>
   <style>
-    body { font-family: system-ui, sans-serif; max-width: 760px; margin: 2rem auto; padding: 0 1rem; color: #222; }
-    nanopub-list ul { list-style: none; padding: 0; }
-    nanopub-list li { padding: 0.6rem 0; border-bottom: 1px solid #eee; display: flex; flex-direction: column; gap: 0.2rem; }
-    nanopub-list time { font-size: 0.85em; color: #666; }
-    nanopub-list h3 { margin: 0; font-size: 1em; }
+    body { font-family: system-ui, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1rem; color: #222; }
+    nanopub-table table { border-collapse: collapse; width: 100%; }
+    nanopub-table th, nanopub-table td { text-align: left; padding: 0.5rem 0.75rem; border-bottom: 1px solid #eee; }
+    nanopub-table th { background: #f5f5f5; font-weight: 600; }
+    nanopub-table time { font-size: 0.85em; color: #666; }
   </style>
 </head>
 <body>
@@ -18,33 +18,34 @@
 
   <h2>Default rendering</h2>
 
-  <nanopub-list
-    query-template="RAkdyQ9BzXmooOF30BsFSNOs8EsSivp5k-eL293diNKXk/get-3pff-events"
-    title-field="Event_Name"
-    date-field="Date"
-    link-field="More_Info"
-  ></nanopub-list>
-
-  <h2>Custom template</h2>
-
   <!--
-    A <template> child gives full control over each item's markup.
-    Use data-bind="FieldName" to set text content.
-    Use data-bind-href="FieldName" to set an attribute (works for any attribute name).
+    columns: JSON array of { field, label, type? }
+    type can be "text" (default), "link", or "date"
+    If columns is omitted, all fields from the query result are shown with their raw field names as headers.
   -->
-  <nanopub-list
+  <nanopub-table
     query-template="RAkdyQ9BzXmooOF30BsFSNOs8EsSivp5k-eL293diNKXk/get-3pff-events"
     date-field="Date"
-  >
-    <template>
-      <li>
-        <h3 data-bind="Event_Name"></h3>
-        <time data-bind="Date"></time>
-        <span data-bind="Organizers"></span>
-        <a data-bind-href="More_Info">more info</a>
-      </li>
-    </template>
-  </nanopub-list>
+    columns='[
+      {"field":"Event_Name","label":"Event"},
+      {"field":"Date","label":"Date","type":"date"},
+      {"field":"Organizers","label":"Organizers"},
+      {"field":"Facilitators","label":"Facilitators"},
+      {"field":"More_Info","label":"More Info","type":"link"}
+    ]'
+  ></nanopub-table>
+
+  <h2>Minimal columns</h2>
+
+  <nanopub-table
+    query-template="RAkdyQ9BzXmooOF30BsFSNOs8EsSivp5k-eL293diNKXk/get-3pff-events"
+    date-field="Date"
+    columns='[
+      {"field":"Event_Name","label":"Event"},
+      {"field":"Date","label":"Date","type":"date"},
+      {"field":"More_Info","label":"Link","type":"link"}
+    ]'
+  ></nanopub-table>
 
 </body>
 </html>

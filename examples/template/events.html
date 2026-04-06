@@ -4,10 +4,11 @@
   <meta charset="UTF-8">
   <title>Events — HTML template</title>
   <style>
-    body { font-family: system-ui, sans-serif; max-width: 760px; margin: 2rem auto; padding: 0 1rem; color: #222; }
-    #events { list-style: none; padding: 0; }
-    #events li { padding: 0.6rem 0; border-bottom: 1px solid #eee; display: flex; flex-direction: column; gap: 0.2rem; }
-    #events time { font-size: 0.85em; color: #666; }
+    body { font-family: system-ui, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1rem; color: #222; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { text-align: left; padding: 0.5rem 0.75rem; border-bottom: 1px solid #eee; }
+    th { background: #f5f5f5; font-weight: 600; }
+    time { font-size: 0.85em; color: #666; }
   </style>
 </head>
 <body>
@@ -15,23 +16,36 @@
   <h1>3PFF events example</h1>
 
   <template id="event-tpl">
-    <li>
-      <time data-bind="Date"></time>
-      <strong data-bind="Event_Name"></strong>
-      <span data-bind="Organizers"></span>
-      <a data-bind-href="More_Info">more info</a>
-    </li>
+    <tr>
+      <td><strong data-bind="Event_Name"></strong></td>
+      <td><time data-bind="Date"></time></td>
+      <td data-bind="Organizers"></td>
+      <td data-bind="Facilitators"></td>
+      <td><a data-bind-href="More_Info">more info</a></td>
+    </tr>
   </template>
 
   <p id="loading">Loading…</p>
-  <ul id="events"></ul>
+  <table id="events" hidden>
+    <thead>
+      <tr>
+        <th>Event</th>
+        <th>Date</th>
+        <th>Organizers</th>
+        <th>Facilitators</th>
+        <th>More Info</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
   <script type="module">
     import { NanopubClient } from '../../dist/nanopub-elements.js';
 
     const client = new NanopubClient();
     const tpl = document.querySelector('#event-tpl');
-    const ul = document.querySelector('#events');
+    const tbody = document.querySelector('#events tbody');
+    const table = document.querySelector('#events');
     const loading = document.querySelector('#loading');
 
     function applyBindings(clone, row) {
@@ -39,7 +53,13 @@
         el.textContent = row[el.dataset.bind] ?? '';
       });
       clone.querySelectorAll('[data-bind-href]').forEach(el => {
-        el.href = row[el.dataset.bindHref] ?? '';
+        const href = row[el.dataset.bindHref] ?? '';
+        if (href) {
+          el.href = href;
+        } else {
+          el.removeAttribute('href');
+          el.textContent = '';
+        }
       });
     }
 
@@ -58,8 +78,10 @@
     for (const row of rows) {
       const clone = tpl.content.cloneNode(true);
       applyBindings(clone, row);
-      ul.appendChild(clone);
+      tbody.appendChild(clone);
     }
+
+    table.hidden = false;
   </script>
 
 </body>
