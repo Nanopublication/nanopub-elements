@@ -82,20 +82,20 @@ For queries that return results in order you can skip collecting and append dire
 
 ## KP news
 
-Query template: `RAOGCU2nQzZ0aE2iXwJ20jJtnZsjVR0pfFg0qlSxYtBIA/get-news-content`
+Query template: `RAOMMFrJj4SyF4vlvJhr_AQH0jRL2jI9RUAroP5ZKe0D8/get-news-content`
 
 Params: `resource` (the space URI)
 
-Returns: `text` (may contain HTML), `link`, `datePublished`, `np`
+Returns: `headline` (may contain HTML), `body` (may contain HTML, often wrapped in `<span>`), `link`, `datePublished`, `np`
 
-If you expect `text` field may contain HTML, make sure to sanitize it before inserting as innerHTML.
+Sanitize `headline` and `body` with DOMPurify before inserting as innerHTML. Add `ADD_ATTR: ['target']` to preserve `target="_blank"` on links. The `body` value is often wrapped in a `<span>` element — unwrap it before appending so you don't get double-nested spans.
 
 ```html
 <template id="news-tpl">
   <li>
-    <span></span>  <!-- text goes here as innerHTML after sanitizing -->
-    <a data-bind-href="link">link</a>
-    <time data-bind="datePublished"></time>
+    <time></time>
+    <span></span>  <!-- headline + body go here as HTML after sanitizing -->
+    <a>link</a>
   </li>
 </template>
 
@@ -109,22 +109,49 @@ If you expect `text` field may contain HTML, make sure to sanitize it before ins
   const tpl = document.querySelector('#news-tpl');
   const ul = document.querySelector('#news');
 
+  const rows = [];
   for await (const row of client.runQueryTemplate(
-    'RAOGCU2nQzZ0aE2iXwJ20jJtnZsjVR0pfFg0qlSxYtBIA/get-news-content',
+    'RAOMMFrJj4SyF4vlvJhr_AQH0jRL2jI9RUAroP5ZKe0D8/get-news-content',
     { resource: 'https://w3id.org/spaces/knowledgepixels' }
   )) {
+    rows.push(row);
+  }
+
+  rows.sort((a, b) => new Date(b.datePublished) - new Date(a.datePublished));
+
+  for (const row of rows) {
     const clone = tpl.content.cloneNode(true);
 
-    // text field contains HTML — sanitize before inserting
-    const span = clone.querySelector('span');
-    span.innerHTML = DOMPurify.sanitize(row.text ?? '');
+    const time = clone.querySelector('time');
+    time.dateTime = row.datePublished ?? '';
+    time.textContent = row.datePublished ?? '';
 
-    clone.querySelectorAll('[data-bind]').forEach(el => {
-      el.textContent = row[el.dataset.bind] ?? '';
-    });
-    clone.querySelectorAll('[data-bind-href]').forEach(el => {
-      el.href = row[el.dataset.bindHref] ?? '';
-    });
+    // headline and body may contain HTML — sanitize before inserting
+    const span = clone.querySelector('span');
+    if (row.headline) {
+      const strong = document.createElement('strong');
+      strong.innerHTML = DOMPurify.sanitize(row.headline, { ADD_ATTR: ['target'] });
+      span.appendChild(strong);
+      if (row.body) span.appendChild(document.createTextNode(' · '));
+    }
+    if (row.body) {
+      const tmp = document.createElement('span');
+      tmp.innerHTML = DOMPurify.sanitize(row.body, { ADD_ATTR: ['target'] });
+      // body is often wrapped in a <span> — unwrap if so
+      const first = tmp.firstElementChild;
+      if (first && first.tagName === 'SPAN' && tmp.childNodes.length === 1) {
+        span.append(...first.childNodes);
+      } else {
+        span.append(...tmp.childNodes);
+      }
+    }
+
+    const a = clone.querySelector('a');
+    if (row.link) {
+      a.href = row.link;
+    } else {
+      a.remove();
+    }
 
     ul.appendChild(clone);
   }
