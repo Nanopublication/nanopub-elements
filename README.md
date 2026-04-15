@@ -152,6 +152,8 @@ Examples are in `examples/`. Run `yarn serve` and open them at:
 - `http://localhost:3000/examples/component/events.html` — `<nanopub-table>` component
 - `http://localhost:3000/examples/component/news.html` — `<nanopub-list>` component
 - `http://localhost:3000/examples/component/nanosessions.html`
+- `http://localhost:3000/examples/component/nanopub-item.html` — `<nanopub-item>` component
 - `http://localhost:3000/examples/template/events.html` — HTML template (table)
 - `http://localhost:3000/examples/template/news.html` — HTML template (list)
 - `http://localhost:3000/examples/template/author.html`
+- `http://localhost:3000/examples/template/nanopub-item.html` — HTML template (single nanopub)
