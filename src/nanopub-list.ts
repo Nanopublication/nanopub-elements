@@ -177,6 +177,8 @@ export class NanopubList extends HTMLElement {
         const value = row[field] ?? '';
         if (key === 'bind') {
           el.textContent = value;
+        } else if (key === 'bindHtml') {
+          el.innerHTML = DOMPurify.sanitize(value, { ADD_ATTR: ['target'] });
         } else {
           // bindHref → href, bindAriaLabel → aria-label
           const attr = key
