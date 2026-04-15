@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Nanopub item — HTML template</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 760px; margin: 2rem auto; padding: 0 1rem; color: #222; }
+    #item h3 { margin: 0 0 0.25rem; }
+    #item em { color: #666; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+
+  <h1>Nanopub item example</h1>
+
+  <template id="item-tpl">
+    <h3></h3>
+    <p><em class="date"></em></p>
+    <div class="description"></div>
+  </template>
+
+  <p id="loading">Loading…</p>
+  <div id="item"></div>
+
+  <script type="module">
+    import { NanopubClient } from '../../dist/nanopub-elements.js';
+    import DOMPurify from 'https://esm.sh/dompurify';
+
+    const URI = 'https://w3id.org/np/RAyR70F27VTtlBdsxLaDsuoMFG6nJ_QljDKbz8muqn7O0';
+
+    const client = new NanopubClient();
+    const tpl = document.querySelector('#item-tpl');
+    const container = document.querySelector('#item');
+    const loading = document.querySelector('#loading');
+
+    const jsonld = await client.fetchNanopub(URI, 'jsonld');
+
+    const assertion = jsonld.find(e => e['@id']?.endsWith('/assertion'))?.['@graph']?.[0] ?? {};
+    const read = (iri) => assertion[iri]?.[0]?.['@value'] ?? '';
+
+    const label = read('http://www.w3.org/2000/01/rdf-schema#label');
+    const startDate = read('http://schema.org/startDate');
+    const description = read('http://purl.org/dc/terms/description');
+
+    loading.remove();
+
+    const clone = tpl.content.cloneNode(true);
+    clone.querySelector('h3').textContent = label;
+    clone.querySelector('.date').textContent = startDate
+      ? new Date(startDate).toLocaleString('en-GB', {
+          day: 'numeric', month: 'long', year: 'numeric',
+          hour: '2-digit', minute: '2-digit', timeZoneName: 'short',
+        })
+      : '';
+    clone.querySelector('.description').innerHTML = DOMPurify.sanitize(description, { ADD_ATTR: ['target'] });
+    container.appendChild(clone);
+  </script>
+
+</body>
+</html>
