@@ -18,7 +18,8 @@
     "build": "tsc --noEmit && esbuild src/index.ts --bundle --format=esm --outfile=dist/nanopub-elements.js",
     "build:watch": "esbuild src/index.ts --bundle --format=esm --outfile=dist/nanopub-elements.js --watch",
     "typecheck": "tsc --noEmit",
-    "serve": "npx serve ."
+    "serve": "npx serve .",
+    "prepack": "yarn build"
   },
   "dependencies": {
     "@nanopub/nanopub-js": "^0.1.1",
