@@ -1,6 +1,6 @@
 # nanopub-elements
 
-This project introduces two approaches for displaying individual nanopubs (WIP) and query results on a web page.
+This project introduces two approaches for displaying individual nanopubs and query results on a web page.
 
 ## Web components
 
@@ -34,6 +34,12 @@ For full control over the markup, add a `<template>` child. Each row is cloned f
   </template>
 </nanopub-list>
 ```
+
+Binding types available on any element inside a template:
+
+- `data-bind="field"` — sets `textContent` (safe for plain text).
+- `data-bind-html="field"` — sets `innerHTML`, sanitized via DOMPurify. Use for fields that contain markup.
+- `data-bind-[attr]="field"` — sets an HTML attribute. Any attribute name works (`data-bind-href`, `data-bind-aria-label`, `data-bind-data-id`, …).
 
 The component renders unstyled semantic HTML. Style it using the tag name as a scope:
 
@@ -82,6 +88,51 @@ nanopub-table time { color: gray; }
 ```
 
 **Attributes:** `query-template`, `params` (JSON), `endpoint`, `columns` (JSON), `date-field`, `sort` (`asc`/`desc`, default `desc`), `limit`.
+
+### `<nanopub-item>`
+
+Fetches a single nanopub by URI and renders fields from its assertion graph.
+
+```html
+<script type="module" src="https://esm.sh/@nanopub/nanopub-elements"></script>
+
+<nanopub-item uri="https://w3id.org/np/RA..."></nanopub-item>
+```
+
+With no template child, the element renders a minimal default: a `<p>` for `label` and a `<div>` for `description` (HTML). For full control, supply a `<template>`:
+
+```html
+<nanopub-item uri="https://w3id.org/np/RA...">
+  <template>
+    <h3 data-bind="label"></h3>
+    <p><em data-bind="startDate" data-format="datetime"></em></p>
+    <div data-bind-html="description"></div>
+  </template>
+</nanopub-item>
+```
+
+Well-known assertion fields exposed to bindings: `label`, `description`, `comment`, `name`, `startDate`, `endDate`, `created`, `creator`, `headline`, `datePublished`. Raw predicate IRIs also work (e.g. `data-bind="http://purl.org/dc/terms/title"`). `np` is always set to the nanopub URI.
+
+Add `data-format="date"` or `data-format="datetime"` to any binding to render ISO date values via `toLocaleString`.
+
+`<nanopub-item>` composes naturally inside a `<nanopub-list>` template when the query returns nanopub URIs but not the assertion fields you want to display:
+
+```html
+<nanopub-list query-template="..." params='...'>
+  <template>
+    <li>
+      <nanopub-item data-bind-uri="np">
+        <template>
+          <strong data-bind="label"></strong>
+          <div data-bind-html="description"></div>
+        </template>
+      </nanopub-item>
+    </li>
+  </template>
+</nanopub-list>
+```
+
+**Attributes:** `uri`, `endpoint`.
 
 ## HTML template patterns
 
