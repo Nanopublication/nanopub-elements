@@ -78,6 +78,32 @@ Each column entry has:
 - `label` — the column header text
 - `type` — `"text"` (default), `"date"` (renders a `<time>` element), or `"link"` (renders an `<a>` element)
 
+For full control over cell markup (e.g. a link whose visible text differs from its href, splitting multi-value cells, conditional formatting), add a `<template>` child. Each row is cloned from it and populated via the same `data-bind` attributes as `<nanopub-list>`:
+
+```html
+<nanopub-table
+  query-template="RAkdyQ9BzXmooOF30BsFSNOs8EsSivp5k-eL293diNKXk/get-3pff-events"
+  date-field="Date"
+  columns='[
+    {"field":"Event_ID","label":"Event ID"},
+    {"field":"Event_Name","label":"Event Name"},
+    {"field":"Date","label":"Date"},
+    {"field":"More_Info","label":"More Info"}
+  ]'
+>
+  <template>
+    <tr>
+      <td><a data-bind-href="Event_ID" data-bind="Event_ID__label"></a></td>
+      <td data-bind="Event_Name"></td>
+      <td><time data-bind="Date"></time></td>
+      <td><a data-bind-href="More_Info">more info</a></td>
+    </tr>
+  </template>
+</nanopub-table>
+```
+
+The `columns` attribute, when present alongside a `<template>`, is used for the header row only; column `type` is ignored since the template defines the cell markup. If `columns` is omitted, no header row is rendered — author your own `<thead>` elsewhere on the page if you need one.
+
 Style the table using the tag name as a scope:
 
 ```css
