@@ -18,7 +18,7 @@ export class NanopubTable extends HTMLElement {
   #ac: AbortController | null = null;
 
   connectedCallback() {
-    // Defer so children are parsed before we read them
+    // Defer so children (e.g. <template>) are parsed before we read them
     setTimeout(() => this.#load());
   }
 
@@ -26,8 +26,11 @@ export class NanopubTable extends HTMLElement {
     if (this.isConnected) this.#load();
   }
 
+  // Replace non-template children with node, leaving <template> children untouched.
   #setContent(node: Node | null) {
-    while (this.firstChild) this.firstChild.remove();
+    Array.from(this.childNodes).forEach(child => {
+      if (!(child instanceof HTMLTemplateElement)) child.remove();
+    });
     if (node) this.appendChild(node);
   }
 
@@ -106,6 +109,9 @@ export class NanopubTable extends HTMLElement {
 
     const items = limit != null ? rows.slice(0, limit) : rows;
 
+    // Read template after fetch — it's still in the DOM because #setContent preserves it
+    const rowTemplate = this.querySelector('template');
+
     // TODO: allow customizing the "no items" message/element via attribute
     if (!items.length) {
       this.#setContent(
@@ -114,17 +120,66 @@ export class NanopubTable extends HTMLElement {
       return;
     }
 
-    // If no columns specified, derive them from the first row's keys
-    if (!columns.length) {
+    // If no columns specified and no template, derive them from the first row's keys
+    if (!columns.length && !rowTemplate) {
       columns = Object.keys(items[0]).map(field => ({ field, label: field }));
     }
 
-    this.#setContent(this.#buildTable(items, columns));
+    this.#setContent(
+      rowTemplate
+        ? this.#buildTableFromTemplate(items, columns, rowTemplate)
+        : this.#buildTable(items, columns),
+    );
   }
 
-  #buildTable(rows: Row[], columns: Column[]): HTMLTableElement {
+  #buildTableFromTemplate(
+    rows: Row[],
+    columns: Column[],
+    template: HTMLTemplateElement,
+  ): HTMLTableElement {
     const table = document.createElement('table');
 
+    // Header row only if columns were specified; otherwise the author is expected
+    // to provide their own header markup outside the element (or accept no header).
+    if (columns.length) table.appendChild(this.#buildThead(columns));
+
+    const tbody = document.createElement('tbody');
+    for (const row of rows) {
+      const clone = template.content.cloneNode(true) as DocumentFragment;
+      this.#applyBindings(clone, row);
+      tbody.appendChild(clone);
+    }
+    table.appendChild(tbody);
+
+    return table;
+  }
+
+  // Applies data-bind and data-bind-[attr] to all elements in a fragment.
+  // data-bind="Field"      → el.textContent
+  // data-bind-href="Field" → el.href  (any attribute name works)
+  #applyBindings(root: DocumentFragment, row: Row) {
+    root.querySelectorAll('*').forEach(el => {
+      for (const [key, field] of Object.entries((el as HTMLElement).dataset)) {
+        if (!field || !key.startsWith('bind')) continue;
+        const value = row[field] ?? '';
+        if (key === 'bind') {
+          el.textContent = value;
+        } else if (key === 'bindHtml') {
+          el.innerHTML = DOMPurify.sanitize(value, { ADD_ATTR: ['target'] });
+        } else {
+          // bindHref → href, bindAriaLabel → aria-label
+          const attr = key
+            .slice(4)
+            .replace(/([A-Z])/g, '-$1')
+            .toLowerCase()
+            .replace(/^-/, '');
+          el.setAttribute(attr, value);
+        }
+      }
+    });
+  }
+
+  #buildThead(columns: Column[]): HTMLTableSectionElement {
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
     for (const col of columns) {
@@ -133,7 +188,12 @@ export class NanopubTable extends HTMLElement {
       headerRow.appendChild(th);
     }
     thead.appendChild(headerRow);
-    table.appendChild(thead);
+    return thead;
+  }
+
+  #buildTable(rows: Row[], columns: Column[]): HTMLTableElement {
+    const table = document.createElement('table');
+    table.appendChild(this.#buildThead(columns));
 
     const tbody = document.createElement('tbody');
     for (const row of rows) {

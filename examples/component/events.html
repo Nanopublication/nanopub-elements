@@ -47,5 +47,33 @@
     ]'
   ></nanopub-table>
 
+  <h2>Custom cells via &lt;template&gt;</h2>
+
+  <!--
+    A <template> child gives full control over cell markup, so links can have
+    labels that differ from their href. Here Event_ID is rendered as
+    <a href="{full IRI}">{short label}</a> using two bindings on the same <a>.
+    Headers still come from the columns attribute.
+  -->
+  <nanopub-table
+    query-template="RAkdyQ9BzXmooOF30BsFSNOs8EsSivp5k-eL293diNKXk/get-3pff-events"
+    date-field="Date"
+    columns='[
+      {"field":"Event_ID","label":"Event ID"},
+      {"field":"Event_Name","label":"Event Name"},
+      {"field":"Date","label":"Date"},
+      {"field":"More_Info","label":"More Info"}
+    ]'
+  >
+    <template>
+      <tr>
+        <td><a data-bind-href="Event_ID" data-bind="Event_ID__label"></a></td>
+        <td data-bind="Event_Name"></td>
+        <td><time data-bind="Date"></time></td>
+        <td><a data-bind-href="More_Info">more info</a></td>
+      </tr>
+    </template>
+  </nanopub-table>
+
 </body>
 </html>
