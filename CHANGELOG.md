@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/Nanopublication/nanopub-elements/compare/v0.2.2...v0.2.3) (2026-06-25)
+
+
+### Bug Fixes
+
+* correct repository URL casing for npm provenance validation ([83f50d8](https://github.com/Nanopublication/nanopub-elements/commit/83f50d8a870b44f57335b1a29145e39d12ba8a21))
+
 ## [0.2.2](https://github.com/Nanopublication/nanopub-elements/compare/v0.2.1...v0.2.2) (2026-06-25)
 
 
