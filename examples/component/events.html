@@ -24,8 +24,7 @@
     If columns is omitted, all fields from the query result are shown with their raw field names as headers.
   -->
   <nanopub-table
-    query-template="RAkdyQ9BzXmooOF30BsFSNOs8EsSivp5k-eL293diNKXk/get-3pff-events"
-    date-field="Date"
+    query-template="RACx0Qdxclvacg6SoAZABV8PdZjZVvVeJ-U189kz4a9S8/get-3pff-events-html"
     columns='[
       {"field":"Event_Name","label":"Event"},
       {"field":"Date","label":"Date","type":"date"},
@@ -43,7 +42,9 @@
     columns='[
       {"field":"Event_Name","label":"Event"},
       {"field":"Date","label":"Date","type":"date"},
-      {"field":"More_Info","label":"Link","type":"link"}
+      {"field":"Organizers","label":"Organizers"},
+      {"field":"Facilitators","label":"Facilitators"},
+      {"field":"More_Info","label":"More Info","type":"link"}
     ]'
   ></nanopub-table>
 
@@ -56,12 +57,14 @@
     Headers still come from the columns attribute.
   -->
   <nanopub-table
-    query-template="RAkdyQ9BzXmooOF30BsFSNOs8EsSivp5k-eL293diNKXk/get-3pff-events"
+    query-template="RACx0Qdxclvacg6SoAZABV8PdZjZVvVeJ-U189kz4a9S8/get-3pff-events-html"
     date-field="Date"
     columns='[
       {"field":"Event_ID","label":"Event ID"},
       {"field":"Event_Name","label":"Event Name"},
       {"field":"Date","label":"Date"},
+      {"field":"Organizers","label":"Organizers"},
+      {"field":"Facilitators","label":"Facilitators"},
       {"field":"More_Info","label":"More Info"}
     ]'
   >
@@ -70,7 +73,9 @@
         <td><a data-bind-href="Event_ID" data-bind="Event_ID__label"></a></td>
         <td data-bind="Event_Name"></td>
         <td><time data-bind="Date"></time></td>
-        <td><a data-bind-href="More_Info">more info</a></td>
+        <td data-bind-html="Organizers"></td>
+        <td data-bind-html="Facilitators"></td>
+        <td><a data-bind-html="More_Info">more info</a></td>
       </tr>
     </template>
   </nanopub-table>
