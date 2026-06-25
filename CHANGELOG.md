@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/Nanopublication/nanopub-elements/compare/v0.2.0...v0.2.1) (2026-06-25)
+
+
+### Bug Fixes
+
+* **deps:** update @nanopub/nanopub-js to ^0.1.2 ([aa53f58](https://github.com/Nanopublication/nanopub-elements/commit/aa53f5873d98f66b93194f5bf9d7e64c94cc57cd))
+
 ## [0.2.0](https://github.com/Nanopublication/nanopub-elements/compare/v0.1.1...v0.2.0) (2026-04-23)
 
 
