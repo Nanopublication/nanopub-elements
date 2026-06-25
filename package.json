@@ -1,6 +1,6 @@
 {
   "name": "@nanopub/nanopub-elements",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "type": "module",
   "main": "./dist/nanopub-elements.js",
   "module": "./dist/nanopub-elements.js",
