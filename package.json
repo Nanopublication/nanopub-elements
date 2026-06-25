@@ -22,7 +22,7 @@
     "prepack": "yarn build"
   },
   "dependencies": {
-    "@nanopub/nanopub-js": "^0.1.1",
+    "@nanopub/nanopub-js": "^0.1.2",
     "dompurify": "^3.3.1"
   },
   "devDependencies": {
