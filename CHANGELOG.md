@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/Nanopublication/nanopub-elements/compare/v0.2.1...v0.2.2) (2026-06-25)
+
+
+### Bug Fixes
+
+* pin nodeLinker to node-modules and skip dependency lib check for CI builds ([1d96587](https://github.com/Nanopublication/nanopub-elements/commit/1d96587f46fd1df657a1d3883e6b8f6b619fc358))
+
 ## [0.2.1](https://github.com/Nanopublication/nanopub-elements/compare/v0.2.0...v0.2.1) (2026-06-25)
 
 
