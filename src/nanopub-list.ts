@@ -14,6 +14,7 @@ export class NanopubList extends HTMLElement {
     'sort',
     'limit',
     'group-by-year',
+    'link-target',
   ];
 
   #ac: AbortController | null = null;
@@ -118,6 +119,21 @@ export class NanopubList extends HTMLElement {
           : this.#buildList(items, titleField, dateField, linkField),
       );
     }
+
+    this.#applyLinkTarget();
+  }
+
+  // If link-target is set, apply it (and a safe rel) to every rendered link.
+  // Runs on the live DOM after render, so it covers built-in links, template
+  // links, and anchors parsed from HTML literals alike. <template> contents are
+  // inert and not descendants, so the template definition is left untouched.
+  #applyLinkTarget() {
+    const target = this.getAttribute('link-target');
+    if (!target) return;
+    this.querySelectorAll<HTMLAnchorElement>('a[href]').forEach(a => {
+      a.target = target;
+      a.rel = 'noopener noreferrer';
+    });
   }
 
   #renderGroupedByYear(

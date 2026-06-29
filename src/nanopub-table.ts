@@ -13,6 +13,7 @@ export class NanopubTable extends HTMLElement {
     'date-field',
     'sort',
     'limit',
+    'link-target',
   ];
 
   #ac: AbortController | null = null;
@@ -130,6 +131,21 @@ export class NanopubTable extends HTMLElement {
         ? this.#buildTableFromTemplate(items, columns, rowTemplate)
         : this.#buildTable(items, columns),
     );
+
+    this.#applyLinkTarget();
+  }
+
+  // If link-target is set, apply it (and a safe rel) to every rendered link.
+  // Runs on the live DOM after render, so it covers built-in links, template
+  // links, and anchors parsed from HTML literals alike. <template> contents are
+  // inert and not descendants, so the template definition is left untouched.
+  #applyLinkTarget() {
+    const target = this.getAttribute('link-target');
+    if (!target) return;
+    this.querySelectorAll<HTMLAnchorElement>('a[href]').forEach(a => {
+      a.target = target;
+      a.rel = 'noopener noreferrer';
+    });
   }
 
   #buildTableFromTemplate(
