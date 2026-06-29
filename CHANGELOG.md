@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/Nanopublication/nanopub-elements/compare/v0.2.3...v0.3.0) (2026-06-29)
+
+
+### Features
+
+* add link-target attribute to open links in a new tab ([342b8b8](https://github.com/Nanopublication/nanopub-elements/commit/342b8b836f075734285661b9dde4234cbf34c216))
+
 ## [0.2.3](https://github.com/Nanopublication/nanopub-elements/compare/v0.2.2...v0.2.3) (2026-06-25)
 
 
