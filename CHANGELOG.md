@@ -6,7 +6,6 @@
 ### Features
 
 * add link-target attribute to open links in a new tab ([342b8b8](https://github.com/Nanopublication/nanopub-elements/commit/342b8b836f075734285661b9dde4234cbf34c216))
-* add link-target attribute to open links in a new tab ([57f2b15](https://github.com/Nanopublication/nanopub-elements/commit/57f2b15776fd0ad2a66c49c77c21a89e7e912367))
 
 ## [0.2.3](https://github.com/Nanopublication/nanopub-elements/compare/v0.2.2...v0.2.3) (2026-06-25)
 
