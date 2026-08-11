@@ -48,7 +48,7 @@ nanopub-list ul { list-style: none; }
 nanopub-list time { color: gray; }
 ```
 
-**Attributes:** `query-template`, `params` (JSON), `endpoint`, `title-field`, `date-field`, `link-field`, `sort` (`asc`/`desc`, default `desc`), `limit`, `group-by-year`.
+**Attributes:** `query-template`, `params` (JSON), `endpoint`, `title-field`, `date-field`, `link-field`, `sort` (`asc`/`desc`, default `desc`), `limit`, `group-by-year`, `link-target`.
 
 ### `<nanopub-table>`
 
@@ -113,7 +113,7 @@ nanopub-table th { background: #f5f5f5; }
 nanopub-table time { color: gray; }
 ```
 
-**Attributes:** `query-template`, `params` (JSON), `endpoint`, `columns` (JSON), `date-field`, `sort` (`asc`/`desc`, default `desc`), `limit`.
+**Attributes:** `query-template`, `params` (JSON), `endpoint`, `columns` (JSON), `date-field`, `sort` (`asc`/`desc`, default `desc`), `limit`, `link-target`.
 
 ### `<nanopub-item>`
 
@@ -158,7 +158,35 @@ Add `data-format="date"` or `data-format="datetime"` to any binding to render IS
 </nanopub-list>
 ```
 
-**Attributes:** `uri`, `endpoint`.
+**Attributes:** `uri`, `endpoint`, `link-target`.
+
+### Opening links in a new tab
+
+All three components accept a `link-target` attribute. When set, its value is applied as the `target` on every link the component renders, together with `rel="noopener noreferrer"`:
+
+```html
+<nanopub-list  ... link-field="More_Info" link-target="_blank"></nanopub-list>
+<nanopub-table ... columns='[...]'        link-target="_blank"></nanopub-table>
+<nanopub-item  ... uri="https://w3id.org/np/RA..." link-target="_blank"></nanopub-item>
+```
+
+This is applied after rendering, so it covers every kind of link uniformly: built-in ones (`link-field`, `type:"link"` columns), links in a `<template>` (`data-bind-href` or a static `<a>`), and anchors inside HTML fields bound with `data-bind-html`. Template *definitions* are left untouched — only the rendered output is modified.
+
+When a `<nanopub-item>` is nested inside a `<nanopub-list>` or `<nanopub-table>` template, it loads its own content asynchronously, after the parent has finished rendering. The parent's `link-target` therefore does not reach the item's links — set `link-target` on the nested `<nanopub-item>` as well:
+
+```html
+<nanopub-list query-template="..." link-target="_blank">
+  <template>
+    <li>
+      <nanopub-item data-bind-uri="np" link-target="_blank">
+        <template>
+          <div data-bind-html="description"></div>
+        </template>
+      </nanopub-item>
+    </li>
+  </template>
+</nanopub-list>
+```
 
 ## HTML template patterns
 
