@@ -1,5 +1,6 @@
 import { NanopubClient } from '@nanopub/nanopub-js';
 import DOMPurify from 'dompurify';
+import { resolveEndpoints } from './endpoints.js';
 
 type Row = Record<string, string>;
 
@@ -48,8 +49,7 @@ export class NanopubList extends HTMLElement {
     const queryTemplateId = this.getAttribute('query-template');
     if (!queryTemplateId) return;
 
-    const endpoint =
-      this.getAttribute('endpoint') ?? 'https://query.knowledgepixels.com/';
+    const endpoints = resolveEndpoints(this.getAttribute('endpoint'));
     const titleField = this.getAttribute('title-field') ?? 'label';
     const dateField = this.getAttribute('date-field');
     const linkField = this.getAttribute('link-field');
@@ -72,7 +72,7 @@ export class NanopubList extends HTMLElement {
     // TODO: allow customizing the loading message/element via attribute
     this.#setContent(Object.assign(document.createElement('p'), { textContent: 'Loading…' }));
 
-    const client = new NanopubClient({ endpoints: [endpoint] });
+    const client = new NanopubClient({ endpoints });
     const rows: Row[] = [];
 
     try {
