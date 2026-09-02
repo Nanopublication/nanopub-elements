@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.0](https://github.com/Nanopublication/nanopub-elements/compare/v0.3.0...v0.4.0) (2026-09-02)
+
+
+### Features
+
+* support link-target on nanopub-item ([#12](https://github.com/Nanopublication/nanopub-elements/issues/12)) ([e78e34c](https://github.com/Nanopublication/nanopub-elements/commit/e78e34c11bc4d1468f94b3aacf9d9cb1dd084b6c)), closes [#9](https://github.com/Nanopublication/nanopub-elements/issues/9)
+
+
+### Bug Fixes
+
+* rotate over query endpoints instead of a single one ([#23](https://github.com/Nanopublication/nanopub-elements/issues/23)) ([ec2d6a0](https://github.com/Nanopublication/nanopub-elements/commit/ec2d6a0cd195b18f75a5b93caab3761d4bb4f19e))
+
 ## [0.3.0](https://github.com/Nanopublication/nanopub-elements/compare/v0.2.3...v0.3.0) (2026-06-29)
 
 
