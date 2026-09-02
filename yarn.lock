@@ -191,7 +191,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@nanopub/nanopub-elements@workspace:."
   dependencies:
-    "@nanopub/nanopub-js": "npm:^0.1.2"
+    "@nanopub/nanopub-js": "npm:^0.2.0"
     "@types/dompurify": "npm:^3.0.5"
     "@types/n3": "npm:^1.26.1"
     dompurify: "npm:^3.3.1"
@@ -200,23 +200,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@nanopub/nanopub-js@npm:^0.1.2":
-  version: 0.1.2
-  resolution: "@nanopub/nanopub-js@npm:0.1.2"
+"@nanopub/nanopub-js@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "@nanopub/nanopub-js@npm:0.2.0"
   dependencies:
-    "@nanopub/nanopub-testsuite-connector-js": "npm:^1.0.0"
     "@rdfjs/data-model": "npm:^2.1.1"
+    "@rdfjs/types": "npm:^2.0.1"
     n3: "npm:^1.26.0"
     rdf-canonize: "npm:^5.0.0"
     rdf-js: "npm:^4.0.2"
-  checksum: 10c0/51016034806e20a39f74c7c25094cb3030fd129499d47fb8c9ea6839504295a290ef9f0c68ffa65df42cdf41b498dab5b40035a8a607ee57cd95726f459ecf1d
-  languageName: node
-  linkType: hard
-
-"@nanopub/nanopub-testsuite-connector-js@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "@nanopub/nanopub-testsuite-connector-js@npm:1.0.0"
-  checksum: 10c0/076c7261ce135a51d439970bac23fe2ee876b09c1ec980b41a0bf5813c594888eced54b6c54882bf390eb18f4b26af75768d997ed300a9e7128306e50fc8f55d
+    sparqljs: "npm:^3.7.4"
+  checksum: 10c0/5a68dadf2775e9fbd1c32d93b19ac2b4e871c9e28700791f03fde67953de219be8aa86ba64eaeb1c2d2c6f4c61946b8d8a6cbcc3dc097c4635bd93dee216e53f
   languageName: node
   linkType: hard
 
@@ -229,12 +223,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rdfjs/types@npm:*":
+"@rdfjs/types@npm:*, @rdfjs/types@npm:^2.0.1":
   version: 2.0.1
   resolution: "@rdfjs/types@npm:2.0.1"
   dependencies:
     "@types/node": "npm:*"
   checksum: 10c0/81012b02e28737e15dfc27068664bbab7b989cc2ff82e0a6a341df492d9d97210b5e462d85bfb7882aa0ef5bf84e2c5e95647fb779b67b7b1910b1837d79c500
+  languageName: node
+  linkType: hard
+
+"@rdfjs/types@npm:^1.0.0":
+  version: 1.1.2
+  resolution: "@rdfjs/types@npm:1.1.2"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/128242157d44453d1f5eac9d93cecfddb44acc4e6675751b2cccbc6c33b44492573785eb748e1841fd4a29921ba8e0412ba038824103d97c38a19f72033d9a5c
   languageName: node
   linkType: hard
 
@@ -447,6 +450,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rdf-data-factory@npm:^1.1.2":
+  version: 1.1.3
+  resolution: "rdf-data-factory@npm:1.1.3"
+  dependencies:
+    "@rdfjs/types": "npm:^1.0.0"
+  checksum: 10c0/b5f5db1417afd72e690c60b0eb19388b0ed519e8d732419ccee4d3a5c15fa8cfd1b16380c9692dec26245a9bbf5ce2cb07360645d60e995337c34796da0c990a
+  languageName: node
+  linkType: hard
+
 "rdf-js@npm:^4.0.2":
   version: 4.0.2
   resolution: "rdf-js@npm:4.0.2"
@@ -480,6 +492,17 @@ __metadata:
   version: 1.0.5
   resolution: "setimmediate@npm:1.0.5"
   checksum: 10c0/5bae81bfdbfbd0ce992893286d49c9693c82b1bcc00dcaaf3a09c8f428fdeacf4190c013598b81875dfac2b08a572422db7df779a99332d0fce186d15a3e4d49
+  languageName: node
+  linkType: hard
+
+"sparqljs@npm:^3.7.4":
+  version: 3.7.4
+  resolution: "sparqljs@npm:3.7.4"
+  dependencies:
+    rdf-data-factory: "npm:^1.1.2"
+  bin:
+    sparqljs: bin/sparql-to-json
+  checksum: 10c0/c24e59a9201fb3c16f7d1bea99dd9ef034f8aee3c94964fa207f444fcab2b351a4f94a2757a3f2d665e3dae85955bb53b7a12538e132cf4a8408d67a6f1d0b74
   languageName: node
   linkType: hard
 
