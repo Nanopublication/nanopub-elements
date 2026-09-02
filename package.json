@@ -13,7 +13,7 @@
   "files": [
     "dist"
   ],
-  "packageManager": "yarn@4.12.0",
+  "packageManager": "yarn@4.18.0",
   "scripts": {
     "build": "tsc --noEmit && esbuild src/index.ts --bundle --format=esm --outfile=dist/nanopub-elements.js",
     "build:watch": "esbuild src/index.ts --bundle --format=esm --outfile=dist/nanopub-elements.js --watch",
