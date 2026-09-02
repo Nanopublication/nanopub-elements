@@ -1,5 +1,6 @@
 import { NanopubClient } from '@nanopub/nanopub-js';
 import DOMPurify from 'dompurify';
+import { resolveEndpoints } from './endpoints.js';
 
 type Row = Record<string, string>;
 
@@ -72,10 +73,9 @@ export class NanopubItem extends HTMLElement {
     const uri = this.getAttribute('uri');
     if (!uri) return;
 
-    const endpoint =
-      this.getAttribute('endpoint') ?? 'https://query.knowledgepixels.com/';
+    const endpoints = resolveEndpoints(this.getAttribute('endpoint'));
 
-    const client = new NanopubClient({ endpoints: [endpoint] });
+    const client = new NanopubClient({ endpoints });
 
     let jsonld: Record<string, unknown>[];
     try {
