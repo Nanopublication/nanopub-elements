@@ -29,7 +29,7 @@
     "@types/dompurify": "^3.0.5",
     "@types/n3": "^1.26.1",
     "esbuild": "^0.25.0",
-    "typescript": "^5.0.0"
+    "typescript": "^7.0.0"
   },
   "license": "MIT",
   "repository": {
