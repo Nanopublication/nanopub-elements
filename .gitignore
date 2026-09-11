@@ -3,3 +3,4 @@ dist/
 .yarn/cache/
 .pnp.*
 .yarn
+coverage/
