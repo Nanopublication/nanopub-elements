@@ -372,7 +372,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@nanopub/nanopub-elements@workspace:."
   dependencies:
-    "@nanopub/nanopub-js": "npm:^0.3.0"
+    "@nanopub/nanopub-js": "npm:^0.4.0"
     "@types/dompurify": "npm:^3.0.5"
     "@types/jsdom": "npm:^30"
     "@types/n3": "npm:^1.26.1"
@@ -386,9 +386,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@nanopub/nanopub-js@npm:^0.3.0":
-  version: 0.3.2
-  resolution: "@nanopub/nanopub-js@npm:0.3.2"
+"@nanopub/nanopub-js@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "@nanopub/nanopub-js@npm:0.4.0"
   dependencies:
     "@rdfjs/data-model": "npm:^2.1.1"
     "@rdfjs/types": "npm:^2.0.1"
@@ -396,7 +396,7 @@ __metadata:
     n3: "npm:^2.0.0"
     rdf-canonize: "npm:^5.0.0"
     rdf-js: "npm:^4.0.2"
-  checksum: 10c0/ed261e14ffb491fc353647bef690317da0d562b609003ae444481b374682b3e98c3681dc7f659a9bd50c546cfdb3c9276ff76dd36b6d5d5fb6dbc62c8f7064f6
+  checksum: 10c0/267694cc7144c4f154e358facbe6a77aa49f9fdc2199ca5528a8fc3108bda16f97fd0ba86918f5bea2195bb1d3ca8c4d29a3ba9d323a96ebfe664e561cfb2184
   languageName: node
   linkType: hard
 
