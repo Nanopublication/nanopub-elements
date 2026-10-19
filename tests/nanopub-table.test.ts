@@ -273,6 +273,22 @@ describe('nanopub-table', () => {
     });
   });
 
+  describe('repeated values', () => {
+    it('repeats a data-bind-each template inside a cell', async () => {
+      respondWithRows([{ label: 'Paper', authors: 'https://orcid.org/0000-0001 https://orcid.org/0000-0002' }]);
+
+      const table = await mountTable(
+        '',
+        `<template><tr><td><template data-bind-each="authors"><a data-bind-href="."></a></template></td></tr></template>`,
+      );
+
+      expect([...table.querySelectorAll('td a')].map(a => a.getAttribute('href'))).toEqual([
+        'https://orcid.org/0000-0001',
+        'https://orcid.org/0000-0002',
+      ]);
+    });
+  });
+
   describe('link-target', () => {
     it('applies the target and a safe rel to every rendered link', async () => {
       const table = await mountTable(`columns='${COLUMNS}' link-target="_blank"`);

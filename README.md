@@ -40,6 +40,13 @@ Binding types available on any element inside a template:
 - `data-bind="field"` — sets `textContent` (safe for plain text).
 - `data-bind-html="field"` — sets `innerHTML`, sanitized via DOMPurify. Use for fields that contain markup.
 - `data-bind-[attr]="field"` — sets an HTML attribute. Any attribute name works (`data-bind-href`, `data-bind-aria-label`, `data-bind-data-id`, …).
+- `<template data-bind-each="field">`: repeats its content once per value of a multi-value field, with the value bound as `"."`. Values are split on newlines if there are any, otherwise on whitespace; set `data-separator` to override. Other fields stay available.
+
+```html
+<template data-bind-each="Facilitators">
+  <a data-bind-href="." data-bind="."></a>
+</template>
+```
 
 The component renders unstyled semantic HTML. Style it using the tag name as a scope:
 
@@ -137,7 +144,7 @@ With no template child, the element renders a minimal default: a `<p>` for `labe
 </nanopub-item>
 ```
 
-Well-known assertion fields exposed to bindings: `label`, `description`, `comment`, `name`, `startDate`, `endDate`, `created`, `creator`, `headline`, `datePublished`. Raw predicate IRIs also work (e.g. `data-bind="http://purl.org/dc/terms/title"`). `np` is always set to the nanopub URI.
+Well-known assertion fields exposed to bindings: `label`, `description`, `comment`, `name`, `startDate`, `endDate`, `created`, `creator`, `headline`, `datePublished`. Raw predicate IRIs also work (e.g. `data-bind="http://purl.org/dc/terms/title"`). `np` is always set to the nanopub URI. A predicate with several values keeps them all: IRIs separated by spaces, literals by newlines, ready for `data-bind-each`.
 
 Add `data-format="date"` or `data-format="datetime"` to any binding to render ISO date values via `toLocaleString`.
 

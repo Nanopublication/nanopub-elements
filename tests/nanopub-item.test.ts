@@ -143,6 +143,44 @@ describe('nanopub-item', () => {
       expect(await renderedValueOf(UNMAPPED_PREDICATE)).toBe('Nanopublications');
     });
 
+    it('keeps every value of a predicate, separating iris with spaces', async () => {
+      respondWithAssertion(
+        assertionWith({
+          [UNMAPPED_PREDICATE]: [{ '@id': 'https://example.org/a' }, { '@id': 'https://example.org/b' }],
+        }),
+      );
+
+      expect(await renderedValueOf(UNMAPPED_PREDICATE)).toBe('https://example.org/a https://example.org/b');
+    });
+
+    it('separates multiple literal values with newlines', async () => {
+      respondWithAssertion(
+        assertionWith({
+          'http://www.w3.org/2000/01/rdf-schema#label': [{ '@value': 'First label' }, { '@value': 'Second label' }],
+        }),
+      );
+
+      expect(await renderedValueOf('label')).toBe('First label\nSecond label');
+    });
+
+    it('renders each value with data-bind-each', async () => {
+      const evidence = 'http://purl.org/spar/cito/citesAsEvidence';
+      respondWithAssertion(
+        assertionWith({ [evidence]: [{ '@id': 'https://doi.org/1' }, { '@id': 'https://doi.org/2' }] }),
+      );
+
+      const item = await mount(`
+        <nanopub-item uri="${NANOPUB_URI}">
+          <template><template data-bind-each="${evidence}"><a data-bind-href="."></a></template></template>
+        </nanopub-item>
+      `);
+
+      expect([...item.querySelectorAll('a')].map(a => a.getAttribute('href'))).toEqual([
+        'https://doi.org/1',
+        'https://doi.org/2',
+      ]);
+    });
+
     it('renders empty values when the payload has no assertion graph', async () => {
       clientBehaviour.fetchNanopub.mockResolvedValue([
         { '@id': `${NANOPUB_URI}/Head`, '@graph': [{ '@id': NANOPUB_URI }] },

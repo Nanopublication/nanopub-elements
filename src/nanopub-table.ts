@@ -1,8 +1,8 @@
 import { NanopubClient } from '@nanopub/nanopub-js';
 import DOMPurify from 'dompurify';
 import { resolveEndpoints } from './endpoints.js';
+import { applyBindings, type Row } from './bindings.js';
 
-type Row = Record<string, string>;
 type Column = { field: string; label: string; type?: 'text' | 'link' | 'date' };
 
 export class NanopubTable extends HTMLElement {
@@ -162,37 +162,12 @@ export class NanopubTable extends HTMLElement {
     const tbody = document.createElement('tbody');
     for (const row of rows) {
       const clone = template.content.cloneNode(true) as DocumentFragment;
-      this.#applyBindings(clone, row);
+      applyBindings(clone, row);
       tbody.appendChild(clone);
     }
     table.appendChild(tbody);
 
     return table;
-  }
-
-  // Applies data-bind and data-bind-[attr] to all elements in a fragment.
-  // data-bind="Field"      → el.textContent
-  // data-bind-href="Field" → el.href  (any attribute name works)
-  #applyBindings(root: DocumentFragment, row: Row) {
-    root.querySelectorAll('*').forEach(el => {
-      for (const [key, field] of Object.entries((el as HTMLElement).dataset)) {
-        if (!field || !key.startsWith('bind')) continue;
-        const value = row[field] ?? '';
-        if (key === 'bind') {
-          el.textContent = value;
-        } else if (key === 'bindHtml') {
-          el.innerHTML = DOMPurify.sanitize(value, { ADD_ATTR: ['target'] });
-        } else {
-          // bindHref → href, bindAriaLabel → aria-label
-          const attr = key
-            .slice(4)
-            .replace(/([A-Z])/g, '-$1')
-            .toLowerCase()
-            .replace(/^-/, '');
-          el.setAttribute(attr, value);
-        }
-      }
-    });
   }
 
   #buildThead(columns: Column[]): HTMLTableSectionElement {
