@@ -37,9 +37,9 @@ For full control over the markup, add a `<template>` child. Each row is cloned f
 
 Binding types available on any element inside a template:
 
-- `data-bind="field"` — sets `textContent` (safe for plain text).
-- `data-bind-html="field"` — sets `innerHTML`, sanitized via DOMPurify. Use for fields that contain markup.
-- `data-bind-[attr]="field"` — sets an HTML attribute. Any attribute name works (`data-bind-href`, `data-bind-aria-label`, `data-bind-data-id`, …).
+- `data-bind="field"`: sets `textContent` (safe for plain text).
+- `data-bind-html="field"`: sets `innerHTML`, sanitized via DOMPurify. Use for fields that contain markup.
+- `data-bind-[attr]="field"`: sets an HTML attribute. Any attribute name works (`data-bind-href`, `data-bind-aria-label`, `data-bind-data-id`, …).
 - `<template data-bind-each="field">`: repeats its content once per value of a multi-value field, with the value bound as `"."`. Values are split on newlines if there are any, otherwise on whitespace; set `data-separator` to override. Other fields stay available.
 
 ```html
@@ -81,9 +81,9 @@ If `columns` is omitted, all fields from the query result are shown with their r
 
 Each column entry has:
 
-- `field` — the query result field name
-- `label` — the column header text
-- `type` — `"text"` (default), `"date"` (renders a `<time>` element), or `"link"` (renders an `<a>` element)
+- `field`: the query result field name
+- `label`: the column header text
+- `type`: `"text"` (default), `"date"` (renders a `<time>` element), or `"link"` (renders an `<a>` element)
 
 For full control over cell markup (e.g. a link whose visible text differs from its href, splitting multi-value cells, conditional formatting), add a `<template>` child. Each row is cloned from it and populated via the same `data-bind` attributes as `<nanopub-list>`:
 
@@ -109,7 +109,7 @@ For full control over cell markup (e.g. a link whose visible text differs from i
 </nanopub-table>
 ```
 
-The `columns` attribute, when present alongside a `<template>`, is used for the header row only; column `type` is ignored since the template defines the cell markup. If `columns` is omitted, no header row is rendered — author your own `<thead>` elsewhere on the page if you need one.
+The `columns` attribute, when present alongside a `<template>`, is used for the header row only; column `type` is ignored since the template defines the cell markup. If `columns` is omitted, no header row is rendered; author your own `<thead>` elsewhere on the page if you need one.
 
 Style the table using the tag name as a scope:
 
@@ -177,9 +177,9 @@ All three components accept a `link-target` attribute. When set, its value is ap
 <nanopub-item  ... uri="https://w3id.org/np/RA..." link-target="_blank"></nanopub-item>
 ```
 
-This is applied after rendering, so it covers every kind of link uniformly: built-in ones (`link-field`, `type:"link"` columns), links in a `<template>` (`data-bind-href` or a static `<a>`), and anchors inside HTML fields bound with `data-bind-html`. Template *definitions* are left untouched — only the rendered output is modified.
+This is applied after rendering, so it covers every kind of link uniformly: built-in ones (`link-field`, `type:"link"` columns), links in a `<template>` (`data-bind-href` or a static `<a>`), and anchors inside HTML fields bound with `data-bind-html`. Template *definitions* are left untouched; only the rendered output is modified.
 
-When a `<nanopub-item>` is nested inside a `<nanopub-list>` or `<nanopub-table>` template, it loads its own content asynchronously, after the parent has finished rendering. The parent's `link-target` therefore does not reach the item's links — set `link-target` on the nested `<nanopub-item>` as well:
+When a `<nanopub-item>` is nested inside a `<nanopub-list>` or `<nanopub-table>` template, it loads its own content asynchronously, after the parent has finished rendering. The parent's `link-target` therefore does not reach the item's links, so set `link-target` on the nested `<nanopub-item>` as well:
 
 ```html
 <nanopub-list query-template="..." link-target="_blank">
@@ -197,7 +197,7 @@ When a `<nanopub-item>` is nested inside a `<nanopub-list>` or `<nanopub-table>`
 
 ## HTML template patterns
 
-If you prefer to write JavaScript directly rather than use a web component, see [templates.md](templates.md). It shows how to use the native HTML `<template>` element together with [nanopub-js](https://github.com/nanopublication/nanopub-js) to fetch and render query results with full control over the markup and logic — as either a list or a table.
+If you prefer to write JavaScript directly rather than use a web component, see [templates.md](templates.md). It shows how to use the native HTML `<template>` element together with [nanopub-js](https://github.com/nanopublication/nanopub-js) to fetch and render query results with full control over the markup and logic, as either a list or a table.
 
 ## Development
 
@@ -210,11 +210,11 @@ yarn serve        # serve the project at http://localhost:3000
 
 Examples are in `examples/`. Run `yarn serve` and open them at:
 
-- `http://localhost:3000/examples/component/events.html` — `<nanopub-table>` component
-- `http://localhost:3000/examples/component/news.html` — `<nanopub-list>` component
+- `http://localhost:3000/examples/component/events.html`: `<nanopub-table>` component
+- `http://localhost:3000/examples/component/news.html`: `<nanopub-list>` component
 - `http://localhost:3000/examples/component/nanosessions.html`
-- `http://localhost:3000/examples/component/nanopub-item.html` — `<nanopub-item>` component
-- `http://localhost:3000/examples/template/events.html` — HTML template (table)
-- `http://localhost:3000/examples/template/news.html` — HTML template (list)
+- `http://localhost:3000/examples/component/nanopub-item.html`: `<nanopub-item>` component
+- `http://localhost:3000/examples/template/events.html`: HTML template (table)
+- `http://localhost:3000/examples/template/news.html`: HTML template (list)
 - `http://localhost:3000/examples/template/author.html`
-- `http://localhost:3000/examples/template/nanopub-item.html` — HTML template (single nanopub)
+- `http://localhost:3000/examples/template/nanopub-item.html`: HTML template (single nanopub)
