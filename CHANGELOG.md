@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/Nanopublication/nanopub-elements/compare/v0.4.0...v0.5.0) (2026-10-20)
+
+
+### Features
+
+* **bindings:** repeat markup per value with data-bind-each, and keep every value in nanopub-item ([59db963](https://github.com/Nanopublication/nanopub-elements/commit/59db9633de1da16c7692f1fdaf2a5adf44dd7673))
+
 ## [0.4.0](https://github.com/Nanopublication/nanopub-elements/compare/v0.3.0...v0.4.0) (2026-09-02)
 
 
