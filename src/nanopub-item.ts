@@ -1,32 +1,6 @@
 import { NanopubClient } from '@nanopub/nanopub-js';
-import DOMPurify from 'dompurify';
 import { resolveEndpoints } from './endpoints.js';
-
-type Row = Record<string, string>;
-
-function formatValue(value: string, format: string | null): string {
-  if (!format || !value) return value;
-  const date = new Date(value);
-  if (isNaN(date.getTime())) return value;
-  if (format === 'date') {
-    return date.toLocaleDateString('en-GB', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    });
-  }
-  if (format === 'datetime') {
-    return date.toLocaleString('en-GB', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      timeZoneName: 'short',
-    });
-  }
-  return value;
-}
+import { applyBindings, type Row } from './bindings.js';
 
 const PREDICATES: Record<string, string> = {
   label: 'http://www.w3.org/2000/01/rdf-schema#label',
@@ -94,7 +68,7 @@ export class NanopubItem extends HTMLElement {
     const fragment = template
       ? (template.content.cloneNode(true) as DocumentFragment)
       : this.#defaultFragment();
-    this.#applyBindings(fragment, row);
+    applyBindings(fragment, row);
     this.#setContent(fragment);
     this.#applyLinkTarget();
   }
@@ -131,10 +105,11 @@ export class NanopubItem extends HTMLElement {
     const row: Row = {};
     if (assertion['@id']) row.subject = assertion['@id'];
 
+    // Multiple values: IRIs joined by spaces, literals by newlines, as data-bind-each splits them.
     const read = (key: string) => {
-      const v = assertion[key]?.[0];
-      if (!v) return '';
-      return v['@value'] ?? v['@id'] ?? '';
+      const values: any[] = assertion[key] ?? [];
+      const joiner = values.every(v => '@id' in v) ? ' ' : '\n';
+      return values.map(v => v['@value'] ?? v['@id'] ?? '').filter(Boolean).join(joiner);
     };
 
     for (const [short, iri] of Object.entries(PREDICATES)) {
@@ -151,26 +126,4 @@ export class NanopubItem extends HTMLElement {
     return row;
   }
 
-  #applyBindings(root: DocumentFragment, row: Row) {
-    root.querySelectorAll('*').forEach(el => {
-      const format = (el as HTMLElement).dataset.format ?? null;
-      for (const [key, field] of Object.entries((el as HTMLElement).dataset)) {
-        if (!field || !key.startsWith('bind')) continue;
-        const raw = row[field] ?? '';
-        const value = formatValue(raw, format);
-        if (key === 'bind') {
-          el.textContent = value;
-        } else if (key === 'bindHtml') {
-          el.innerHTML = DOMPurify.sanitize(value, { ADD_ATTR: ['target'] });
-        } else {
-          const attr = key
-            .slice(4)
-            .replace(/([A-Z])/g, '-$1')
-            .toLowerCase()
-            .replace(/^-/, '');
-          el.setAttribute(attr, value);
-        }
-      }
-    });
-  }
 }

@@ -267,6 +267,68 @@ describe('nanopub-list', () => {
     });
   });
 
+  describe('repeated values', () => {
+    const FACILITATORS = 'https://orcid.org/0000-0001 https://orcid.org/0000-0002';
+
+    it('repeats a data-bind-each template once per value, bound as "."', async () => {
+      respondWithRows([{ label: 'Event', people: FACILITATORS }]);
+
+      const list = await mountList(
+        '',
+        `<template><li><span data-bind="label"></span><template data-bind-each="people"><a data-bind-href="." data-bind="."></a></template></li></template>`,
+      );
+
+      const links = [...list.querySelectorAll('li a')];
+      expect(links.map(a => a.getAttribute('href'))).toEqual(FACILITATORS.split(' '));
+      expect(textOf(list, 'li a')).toEqual(FACILITATORS.split(' '));
+      expect(list.querySelector('li template')).toBeNull();
+    });
+
+    it('keeps the other row fields available inside the repeated markup', async () => {
+      respondWithRows([{ label: 'Event', people: FACILITATORS }]);
+
+      const list = await mountList(
+        '',
+        `<template><li><template data-bind-each="people"><span data-bind="label"></span></template></li></template>`,
+      );
+
+      expect(textOf(list, 'li span')).toEqual(['Event', 'Event']);
+    });
+
+    it('splits on newlines when the value has any, so values may contain spaces', async () => {
+      respondWithRows([{ names: 'Ada Lovelace\nAlan Turing' }]);
+
+      const list = await mountList(
+        '',
+        `<template><li><template data-bind-each="names"><span data-bind="."></span></template></li></template>`,
+      );
+
+      expect(textOf(list, 'li span')).toEqual(['Ada Lovelace', 'Alan Turing']);
+    });
+
+    it('splits on a custom separator', async () => {
+      respondWithRows([{ tags: 'rdf;nanopub' }]);
+
+      const list = await mountList(
+        '',
+        `<template><li><template data-bind-each="tags" data-separator=";"><span data-bind="."></span></template></li></template>`,
+      );
+
+      expect(textOf(list, 'li span')).toEqual(['rdf', 'nanopub']);
+    });
+
+    it('renders nothing for an empty field', async () => {
+      respondWithRows([{ label: 'Event' }]);
+
+      const list = await mountList(
+        '',
+        `<template><li><template data-bind-each="people"><a data-bind="."></a></template></li></template>`,
+      );
+
+      expect(list.querySelectorAll('li a')).toHaveLength(0);
+    });
+  });
+
   describe('link-target', () => {
     it('applies the target and a safe rel to every rendered link', async () => {
       const list = await mountList('link-field="link" link-target="_blank"');
