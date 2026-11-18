@@ -165,7 +165,7 @@ Add `data-format="date"` or `data-format="datetime"` to any binding to render IS
 </nanopub-list>
 ```
 
-**Attributes:** `uri`, `endpoint`, `link-target`.
+**Attributes:** `uri`, `endpoint`, `link-target`, `subject` (IRI of the assertion resource to show, when there are several).
 
 ### Opening links in a new tab
 

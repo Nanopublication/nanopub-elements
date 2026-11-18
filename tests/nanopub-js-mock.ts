@@ -113,5 +113,6 @@ export function nanopubJsModuleMock(): Record<string, unknown> {
   return {
     NanopubClient: NanopubClientMock,
     NANOPUB_QUERY_URLS: BOOTSTRAP_ENDPOINTS,
+    NPX: (local: string) => ({ value: `http://purl.org/nanopub/x/${local}` }),
   };
 }

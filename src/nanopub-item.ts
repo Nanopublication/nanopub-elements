@@ -1,4 +1,4 @@
-import { NanopubClient } from '@nanopub/nanopub-js';
+import { NanopubClient, NPX } from '@nanopub/nanopub-js';
 import { resolveEndpoints } from './endpoints.js';
 import { applyBindings, type Row } from './bindings.js';
 
@@ -15,8 +15,10 @@ const PREDICATES: Record<string, string> = {
   datePublished: 'http://schema.org/datePublished',
 };
 
+const INTRODUCES = NPX('introduces').value;
+
 export class NanopubItem extends HTMLElement {
-  static observedAttributes = ['uri', 'endpoint', 'link-target'];
+  static observedAttributes = ['uri', 'endpoint', 'link-target', 'subject'];
 
   #ac: AbortController | null = null;
 
@@ -96,10 +98,24 @@ export class NanopubItem extends HTMLElement {
     return frag;
   }
 
-  #extractFields(jsonld: any): Row {
-    const assertion = jsonld.find((e: any) =>
+  // subject attribute, else introduced resource, else first labelled node, else first node
+  #mainNode(jsonld: any): any {
+    const nodes: any[] = jsonld.find((e: any) =>
       e['@id']?.endsWith('/assertion'),
-    )?.['@graph']?.[0];
+    )?.['@graph'] ?? [];
+    const byId = (id: string | null | undefined) => id && nodes.find(n => n['@id'] === id);
+    const introduced = jsonld
+      .flatMap((g: any) => g['@graph'] ?? [])
+      .flatMap((n: any) => n[INTRODUCES] ?? [])
+      .map((v: any) => v['@id']);
+    return byId(this.getAttribute('subject'))
+      ?? introduced.map(byId).find(Boolean)
+      ?? nodes.find(n => n[PREDICATES.label])
+      ?? nodes[0];
+  }
+
+  #extractFields(jsonld: any): Row {
+    const assertion = this.#mainNode(jsonld);
     if (!assertion) return {};
 
     const row: Row = {};
