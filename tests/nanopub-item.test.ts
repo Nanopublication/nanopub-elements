@@ -190,6 +190,58 @@ describe('nanopub-item', () => {
     });
   });
 
+  describe('main resource', () => {
+    const PRESET = { '@id': 'https://example.org/preset', 'https://example.org/vocab#preset': [{ '@id': 'https://example.org/p1' }] };
+    const EVENT = assertionWith({ '@id': 'https://example.org/event' });
+    const OTHER = { '@id': 'https://example.org/other', 'http://www.w3.org/2000/01/rdf-schema#label': [{ '@value': 'Other' }] };
+
+    /**
+     * @param nodes the assertion graph nodes
+     * @param pubinfo extra pubinfo nodes
+     */
+    function respondWithGraph(nodes: unknown[], pubinfo: unknown[] = []): void {
+      clientBehaviour.fetchNanopub.mockResolvedValue([
+        { '@id': `${NANOPUB_URI}/assertion`, '@graph': nodes },
+        { '@id': `${NANOPUB_URI}/pubinfo`, '@graph': pubinfo },
+      ]);
+    }
+
+    /**
+     * @param attrs extra attributes for the element
+     * @return the rendered subject
+     */
+    async function renderedSubject(attrs = ''): Promise<string> {
+      const item = await mount(`
+        <nanopub-item uri="${NANOPUB_URI}" ${attrs}>
+          <template><span data-bind="subject"></span></template>
+        </nanopub-item>
+      `);
+      return item.querySelector('span')?.textContent ?? '';
+    }
+
+    it('uses the subject attribute when given', async () => {
+      respondWithGraph([EVENT, OTHER]);
+      expect(await renderedSubject('subject="https://example.org/other"')).toBe('https://example.org/other');
+    });
+
+    it('prefers the resource the nanopub introduces', async () => {
+      respondWithGraph([OTHER, EVENT], [
+        { '@id': NANOPUB_URI, 'http://purl.org/nanopub/x/introduces': [{ '@id': 'https://example.org/event' }] },
+      ]);
+      expect(await renderedSubject()).toBe('https://example.org/event');
+    });
+
+    it('falls back to the first labelled node', async () => {
+      respondWithGraph([PRESET, EVENT]);
+      expect(await renderedSubject()).toBe('https://example.org/event');
+    });
+
+    it('ignores a subject attribute not in the assertion', async () => {
+      respondWithGraph([PRESET, EVENT]);
+      expect(await renderedSubject('subject="https://example.org/missing"')).toBe('https://example.org/event');
+    });
+  });
+
   describe('template bindings', () => {
     it('binds text, attributes and markup', async () => {
       respondWithAssertion(
