@@ -85,6 +85,35 @@ describe('nanopub-list', () => {
     });
   });
 
+  describe('sparql query', () => {
+    const QUERY = 'SELECT ?label WHERE { ?s rdfs:label ?label }';
+
+    it('runs the query and renders its rows', async () => {
+      clientBehaviour.querySparql.mockResolvedValue([{ label: 'From SPARQL' }]);
+
+      const list = await mount(`<nanopub-list query="${QUERY}"></nanopub-list>`);
+
+      expect(clientBehaviour.querySparql).toHaveBeenCalledWith(QUERY);
+      expect(textOf(list, 'li span')).toEqual(['From SPARQL']);
+    });
+
+    it('prefers query-template when both are set', async () => {
+      await mountList(`query="${QUERY}"`);
+
+      expect(clientBehaviour.runQueryTemplate).toHaveBeenCalled();
+      expect(clientBehaviour.querySparql).not.toHaveBeenCalled();
+    });
+
+    it('reports a failed query', async () => {
+      vi.spyOn(console, 'error').mockImplementation(() => {});
+      clientBehaviour.querySparql.mockRejectedValue(new Error('offline'));
+
+      const list = await mount(`<nanopub-list query="${QUERY}"></nanopub-list>`);
+
+      expect(list.textContent?.trim()).toBe('Failed to load.');
+    });
+  });
+
   describe('query parameters', () => {
     it('forwards parsed params to the query template', async () => {
       await mountList(`params='{"author":"0000-0002-1825-0097"}'`);

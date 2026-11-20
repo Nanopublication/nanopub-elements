@@ -7,6 +7,7 @@ export const BOOTSTRAP_ENDPOINTS = ['https://bootstrap.example/np/'];
 type NanopubJsMockState = {
   fetchNanopub: Mock;
   runQueryTemplate: Mock;
+  querySparql: Mock;
   refreshEndpoints: Mock;
   configs: { endpoints: string[] }[];
 };
@@ -18,6 +19,7 @@ const globalWithMockState = globalThis as typeof globalThis & {
 const state: NanopubJsMockState = (globalWithMockState.nanopubJsMockState ??= {
   fetchNanopub: vi.fn(),
   runQueryTemplate: vi.fn(),
+  querySparql: vi.fn(),
   refreshEndpoints: vi.fn(),
   configs: [],
 });
@@ -59,6 +61,10 @@ export class NanopubClientMock {
     return state.runQueryTemplate(queryId, params);
   }
 
+  querySparql(query: string): Promise<QueryRow[]> {
+    return state.querySparql(query);
+  }
+
   /**
    * @return the scripted list of discovered query endpoints
    */
@@ -75,6 +81,7 @@ export function resetNanopubJsMock(): void {
   state.configs.length = 0;
   state.fetchNanopub.mockReset();
   state.runQueryTemplate.mockReset();
+  state.querySparql.mockReset();
   state.refreshEndpoints.mockReset().mockResolvedValue([...BOOTSTRAP_ENDPOINTS]);
 }
 
