@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.1](https://github.com/Nanopublication/nanopub-elements/compare/v0.5.0...v0.5.1) (2026-11-20)
+
+
+### Bug Fixes
+
+* **item:** pick the main resource of the assertion ([#71](https://github.com/Nanopublication/nanopub-elements/issues/71)) ([3fd163b](https://github.com/Nanopublication/nanopub-elements/commit/3fd163b897a9f6b36fe7943e6d3af0a246bb329c)), closes [#64](https://github.com/Nanopublication/nanopub-elements/issues/64)
+
 ## [0.5.0](https://github.com/Nanopublication/nanopub-elements/compare/v0.4.0...v0.5.0) (2026-10-20)
 
 
