@@ -6,6 +6,7 @@ import { applyBindings, type Row } from './bindings.js';
 export class NanopubList extends HTMLElement {
   static observedAttributes = [
     'query-template',
+    'query',
     'params',
     'endpoint',
     'title-field',
@@ -46,7 +47,8 @@ export class NanopubList extends HTMLElement {
     this.#ac = ac;
 
     const queryTemplateId = this.getAttribute('query-template');
-    if (!queryTemplateId) return;
+    const query = this.getAttribute('query');
+    if (!queryTemplateId && !query) return;
 
     const endpoints = resolveEndpoints(this.getAttribute('endpoint'));
     const titleField = this.getAttribute('title-field') ?? 'label';
@@ -75,9 +77,14 @@ export class NanopubList extends HTMLElement {
     const rows: Row[] = [];
 
     try {
-      for await (const row of client.runQueryTemplate(queryTemplateId, params)) {
-        if (ac.signal.aborted) return;
-        rows.push(row);
+      if (queryTemplateId) {
+        for await (const row of client.runQueryTemplate(queryTemplateId, params)) {
+          if (ac.signal.aborted) return;
+          rows.push(row);
+        }
+      } else {
+        // TODO: querySparql returns [] on a 4xx, so a malformed query shows as "No items found."
+        rows.push(...(await client.querySparql(query!)) as Row[]);
       }
     } catch (err) {
       if (ac.signal.aborted) return;
