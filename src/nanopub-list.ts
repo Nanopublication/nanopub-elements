@@ -3,6 +3,33 @@ import DOMPurify from 'dompurify';
 import { resolveEndpoints } from './endpoints.js';
 import { applyBindings, type Row } from './bindings.js';
 
+// Merges rows sharing a key value, keeping each field's distinct values newline-separated for data-bind-each.
+function groupRows(rows: Row[], key: string): Row[] {
+  const groups = new Map<string, Map<string, Set<string>>>();
+  const ordered: (Row | Map<string, Set<string>>)[] = [];
+  for (const row of rows) {
+    const id = row[key];
+    if (!id) {
+      ordered.push(row);
+      continue;
+    }
+    let fields = groups.get(id);
+    if (!fields) {
+      fields = new Map();
+      groups.set(id, fields);
+      ordered.push(fields);
+    }
+    for (const [field, value] of Object.entries(row)) {
+      if (!value) continue;
+      const values = fields.get(field) ?? new Set<string>();
+      fields.set(field, values.add(value));
+    }
+  }
+  return ordered.map(entry => entry instanceof Map
+    ? Object.fromEntries([...entry].map(([field, values]) => [field, [...values].join('\n')]))
+    : entry);
+}
+
 export class NanopubList extends HTMLElement {
   static observedAttributes = [
     'query-template',
@@ -14,6 +41,7 @@ export class NanopubList extends HTMLElement {
     'sort',
     'limit',
     'group-by-year',
+    'group-by',
     'link-target',
   ];
 
@@ -72,7 +100,7 @@ export class NanopubList extends HTMLElement {
     this.#setContent(Object.assign(document.createElement('p'), { textContent: 'Loading…' }));
 
     const client = new NanopubClient({ endpoints });
-    const rows: Row[] = [];
+    let rows: Row[] = [];
 
     try {
       for await (const row of client.runQueryTemplate(queryTemplateId, params)) {
@@ -88,6 +116,9 @@ export class NanopubList extends HTMLElement {
     }
 
     if (ac.signal.aborted) return;
+
+    const groupBy = this.getAttribute('group-by');
+    if (groupBy) rows = groupRows(rows, groupBy);
 
     if (dateField) {
       rows.sort((a, b) => {
