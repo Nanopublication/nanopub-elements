@@ -55,7 +55,7 @@ nanopub-list ul { list-style: none; }
 nanopub-list time { color: gray; }
 ```
 
-**Attributes:** `query-template`, `params` (JSON), `endpoint`, `title-field`, `date-field`, `link-field`, `sort` (`asc`/`desc`, default `desc`), `limit`, `group-by-year`, `link-target`.
+**Attributes:** `query-template`, `params` (JSON), `endpoint`, `title-field`, `date-field`, `link-field`, `sort` (`asc`/`desc`, default `desc`), `limit`, `group-by-year`, `group-by` (field to merge rows on, e.g. `np`, so each nanopub renders once with all its values), `link-target`.
 
 ### `<nanopub-table>`
 

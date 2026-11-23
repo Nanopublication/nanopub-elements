@@ -329,6 +329,49 @@ describe('nanopub-list', () => {
     });
   });
 
+  describe('grouping rows', () => {
+    const ROWS: QueryRow[] = [
+      { np: 'https://w3id.org/np/RA1', label: 'First', person: 'https://orcid.org/1' },
+      { np: 'https://w3id.org/np/RA1', label: 'First', person: 'https://orcid.org/2' },
+      { np: 'https://w3id.org/np/RA2', label: 'Second', person: 'https://orcid.org/3' },
+    ];
+    const TEMPLATE = `<template><li><span data-bind="label"></span><template data-bind-each="person"><a data-bind="."></a></template></li></template>`;
+
+    it('renders one item per nanopub with all its values', async () => {
+      respondWithRows(ROWS);
+
+      const list = await mountList('group-by="np"', TEMPLATE);
+
+      expect(textOf(list, 'li > span')).toEqual(['First', 'Second']);
+      expect(textOf(list, 'li:first-child a')).toEqual(['https://orcid.org/1', 'https://orcid.org/2']);
+    });
+
+    it('applies limit to grouped items', async () => {
+      respondWithRows(ROWS);
+
+      const list = await mountList('group-by="np" limit="1"', TEMPLATE);
+
+      expect(list.querySelectorAll('li')).toHaveLength(1);
+      expect(textOf(list, 'li a')).toEqual(['https://orcid.org/1', 'https://orcid.org/2']);
+    });
+
+    it('keeps rows without the field as separate items', async () => {
+      respondWithRows([{ label: 'A' }, { label: 'B' }]);
+
+      const list = await mountList('group-by="np"', TEMPLATE);
+
+      expect(textOf(list, 'li > span')).toEqual(['A', 'B']);
+    });
+
+    it('renders every row when group-by is not set', async () => {
+      respondWithRows(ROWS);
+
+      const list = await mountList('', TEMPLATE);
+
+      expect(list.querySelectorAll('li')).toHaveLength(3);
+    });
+  });
+
   describe('link-target', () => {
     it('applies the target and a safe rel to every rendered link', async () => {
       const list = await mountList('link-field="link" link-target="_blank"');
